@@ -1,7 +1,7 @@
 import xlsx from "xlsx";
 import path from "path";
-import { NormalizedSheetItem, SheetItem, SheetItemWithSources } from "./type";
-import { formattedDate, generateData, getHigherAbsoluteValue } from "./utils";
+import { NormalizedSheetItem, SheetItem } from "./type";
+import { formattedDate, generateData } from "./utils";
 const GRAVITY_SHEET = "Gravity";
 const LSA_SHEET = "LSA";
 
