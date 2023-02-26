@@ -1,14 +1,14 @@
-import xlsx from "xlsx";
+import xlsx, { Sheet } from "xlsx";
 import path from "path";
-import { NormalizedSheetItem, SheetItem } from "./type";
+import { NormalizedSheetItem, SheetItem, SheetItemWithSources } from "./type";
 const GRAVITY_SHEET = "Gravity2";
 const LSA_SHEET = "LSA2";
 
 function getHigherAbsoluteValue(a: number, b: number) {
   if (Math.abs(a) > Math.abs(b)) {
-    return a;
+    return { value: a, s: "Gravity" };
   } else {
-    return b;
+    return { value: b, s: "LSA" };
   }
 }
 // Define the absolute file path
@@ -39,68 +39,45 @@ function generateData(
   lsaData: NormalizedSheetItem
 ) {
   let dataKeyGravity = Object.keys(gravityData);
-  let finalOutput: SheetItem = [];
+  let finalOutput: SheetItem[] = [];
 
   dataKeyGravity.forEach(rowKey => {
     const key = rowKey.split("__")[0];
-    let rowData: SheetItem = {
-      Story: gravityData[rowKey].Story,
-      Beam: gravityData[rowKey].Beam,
-      UniqueName: gravityData[rowKey]["UniqueName"],
-      "Output Case": gravityData[rowKey]["Output Case"],
-      "Case Type": gravityData[rowKey]["Case Type"],
-      "Step Type": gravityData[rowKey]["Step Type"],
-      Station: gravityData[rowKey].Station,
-      P: gravityData[rowKey].P,
-      V2: gravityData[rowKey].V2,
-      V3: gravityData[rowKey].V3,
-      T: gravityData[rowKey].T,
-      M2: gravityData[rowKey].M2,
-      M3: gravityData[rowKey].M3,
-      Element: gravityData[rowKey].Element,
-      "Element Station": gravityData[rowKey]["Element Station"],
-      Location: gravityData[rowKey]["Location"],
+    const gravityRow = gravityData[rowKey];
+    const lsaRow = lsaData[rowKey];
+    let rowData: SheetItemWithSources = {
+      Story: gravityRow.Story,
+      Beam: gravityRow.Beam,
+      UniqueName: gravityRow["UniqueName"],
+      "Output Case": "Combined",
+      "Case Type": gravityRow["Case Type"],
+      "Step Type": gravityRow["Step Type"],
+      Station: gravityRow.Station,
+      P: getHigherAbsoluteValue(gravityRow.P, lsaRow.P).value,
+      "P source": getHigherAbsoluteValue(gravityRow.P, lsaRow.P).s,
+      V2: getHigherAbsoluteValue(gravityRow.V2, lsaRow.V2).value,
+      "V2 source": getHigherAbsoluteValue(gravityRow.V2, lsaRow.V2).s,
+      V3: getHigherAbsoluteValue(gravityRow.V3, lsaRow.V3).value,
+      "V3 source": getHigherAbsoluteValue(gravityRow.V3, lsaRow.V3).s,
+      T: getHigherAbsoluteValue(gravityRow.T, lsaRow.T).value,
+      "T source": getHigherAbsoluteValue(gravityRow.T, lsaRow.T).s,
+      M2: getHigherAbsoluteValue(gravityRow.M2, lsaRow.M2).value,
+      "M2 source": getHigherAbsoluteValue(gravityRow.M2, lsaRow.M2).s,
+      M3: getHigherAbsoluteValue(gravityRow.M3, lsaRow.M3).value,
+      "M3 source": getHigherAbsoluteValue(gravityRow.M3, lsaRow.M3).s,
+      Element: gravityRow.Element,
+      "Element Station": gravityRow["Element Station"],
+      Location: gravityRow["Location"],
     };
-    // console.log(lsaData[rowKey]);
-    console.log(rowData);
+    finalOutput.push(rowData);
   });
+  return finalOutput;
 }
 
-//first iteration
-// 33971-1__something
-generateData(gravityDataOutput, lsaDataOutput);
+let jsonOutput = generateData(gravityDataOutput, lsaDataOutput);
 
-// function generateData(sheetOne: SheetItem[], sheetTwo: SheetItem[]) {
-//   if (sheetOne.length !== sheetTwo.length) {
-//     console.log("The row length seems not tally, please check again ;D");
-//     return;
-//   }
+const newWb = xlsx.utils.book_new();
+const newWS = xlsx.utils.json_to_sheet(jsonOutput);
+xlsx.utils.book_append_sheet(newWb, newWS, "New data");
 
-//   const netTable: SheetItem[] = [];
-//   for (let index = 0; index < sheetOne.length; index++) {
-//     const gravityRowItem = sheetOne[index];
-//     const lsaRowItem = sheetTwo[index];
-
-//     let rowData: SheetItem = {
-//       Story: gravityRowItem.Story,
-//       Beam: gravityRowItem.Beam,
-//       UniqueName: gravityRowItem["UniqueName"],
-//       "Output Case": gravityRowItem["Output Case"],
-//       "Case Type": gravityRowItem["Case Type"],
-//       "Step Type": gravityRowItem["Step Type"],
-//       Station: gravityRowItem.Station,
-//       P: gravityRowItem.P,
-//       V2: gravityRowItem.V2,
-//       V3: gravityRowItem.V3,
-//       T: gravityRowItem.T,
-//       M2: gravityRowItem.M2,
-//       M3: gravityRowItem.M3,
-//       Element: gravityRowItem.Element,
-//       "Element Station": gravityRowItem["Element Station"],
-//       Location: gravityRowItem["Location"],
-//     };
-//     netTable.push(rowData);
-//   }
-// }
-
-// generateData(gravityData, lsaSheetData);
+xlsx.writeFile(newWb, "output2.xlsm");

@@ -20,3 +20,13 @@ export type SheetItem = {
 export type NormalizedSheetItem = {
   [key: string]: SheetItem;
 };
+
+type SourceString =
+  | "P source"
+  | "V2 source"
+  | "V3 source"
+  | "T source"
+  | "M2 source"
+  | "M3 source";
+
+export type SheetItemWithSources = SheetItem & Record<SourceString, string>;
