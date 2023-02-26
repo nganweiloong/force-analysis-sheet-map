@@ -1,4 +1,6 @@
 Step to use the script
 
 1. Install NodeJS - https://nodejs.org/en/ (any version but preferably LTS)
-2. run the .exe.
+2. Make sure you put the sheet inside InputFolder
+3. Run converter.bat
+4. Enjoy ;D

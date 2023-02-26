@@ -26,10 +26,10 @@ const readline = require("readline");
     const fileName = yield new Promise(resolve => {
         rl.question(`Enter the target file name, eg: 'example.xlsm'.(Press enter for default file = 'BDA.xlsm')
       `, (name) => {
-            resolve(name);
+            resolve(name || "BDA.xlsm");
         });
     });
-    const filePath = path_1.default.join(__dirname, fileName);
+    const filePath = path_1.default.join(`${__dirname}/InputFolder`, fileName);
     // Read the XLSX file
     const workbook = xlsx_1.default.readFile(filePath);
     // Get the sheet names
@@ -54,7 +54,7 @@ const readline = require("readline");
         const newWb = xlsx_1.default.utils.book_new();
         const newWS = xlsx_1.default.utils.json_to_sheet(jsonOutput);
         xlsx_1.default.utils.book_append_sheet(newWb, newWS, "New data");
-        xlsx_1.default.writeFile(newWb, `output4-${utils_1.formattedDate}.xlsm`);
+        xlsx_1.default.writeFile(newWb, `./Output/output-${utils_1.formattedDate}.xlsm`);
     }
     generateFile();
     rl.close();

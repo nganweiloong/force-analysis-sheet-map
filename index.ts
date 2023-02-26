@@ -18,12 +18,12 @@ const readline = require("readline");
       `Enter the target file name, eg: 'example.xlsm'.(Press enter for default file = 'BDA.xlsm')
       `,
       (name: string) => {
-        resolve(name);
+        resolve(name || "BDA.xlsm");
       }
     );
   });
+  const filePath = path.join(`${__dirname}/InputFolder`, fileName);
 
-  const filePath = path.join(__dirname, fileName);
   // Read the XLSX file
   const workbook = xlsx.readFile(filePath);
   // Get the sheet names
@@ -53,7 +53,7 @@ const readline = require("readline");
     const newWb = xlsx.utils.book_new();
     const newWS = xlsx.utils.json_to_sheet(jsonOutput);
     xlsx.utils.book_append_sheet(newWb, newWS, "New data");
-    xlsx.writeFile(newWb, `output4-${formattedDate}.xlsm`);
+    xlsx.writeFile(newWb, `./Output/output-${formattedDate}.xlsm`);
   }
 
   generateFile();
