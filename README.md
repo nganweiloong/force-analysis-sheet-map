@@ -8,3 +8,5 @@ Step to use the script
 Side Notes:
 
 Make sure the sheet consists of 'Gravity' and 'LSA' , else the code will break lol.
+
+Rmb clear output folder before run ;D
