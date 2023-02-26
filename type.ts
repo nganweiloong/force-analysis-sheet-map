@@ -27,6 +27,7 @@ type SourceString =
   | "V3 source"
   | "T source"
   | "M2 source"
-  | "M3 source";
+  | "M3 source"
+  | "Row source";
 
 export type SheetItemWithSources = SheetItem & Record<SourceString, string>;
